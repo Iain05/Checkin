@@ -37,3 +37,6 @@ colored_items = questionary.Style([
     ("cyan", "fg:" + PALETTE.mocha.colors.teal.hex),
     ("blue", "fg:" + PALETTE.mocha.colors.blue.hex)
 ])
+
+standard_style = questionary.Style([
+    ("answer", "fg:" + PALETTE.mocha.colors.blue.hex)])

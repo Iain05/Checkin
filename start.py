@@ -4,7 +4,7 @@ import csv
 import questionary
 from datetime import datetime
 
-from fields import mood_energy_levels, colored_items
+from fields import mood_energy_levels, colored_items, standard_style
 from fields import moods, energies, activities
 
 today = datetime.today()
@@ -81,7 +81,10 @@ def activities_selector():
 
 def write_data_prompt() -> None:
     input = questionary.confirm(
-        "Save this Checkin?", auto_enter=False, qmark="").ask()
+        "Save this Checkin?",
+        auto_enter=False, qmark="",
+        style=standard_style
+    ).ask()
     if input:
         write_data()
     return
@@ -106,7 +109,7 @@ def clear() -> None:
             " What have you done or will you do today?", bold=True))
         for i, e in enumerate(activities_answer):
             click.echo(
-                "    " + click.style(activities[i], fg="magenta")) if e else None
+                "    " + click.style(activities[i], fg="blue")) if e else None
 
 
 """ Write the data to the CSV file
