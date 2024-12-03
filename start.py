@@ -9,29 +9,32 @@ from questionary import Choice
 
 today = datetime.today()
 date_int = today.timetuple().tm_yday
-mood = -1
-energy = -1
+mood_answer = -1
+energy_answer = -1
+activities_answer = [False, False, False, False]
 
-mood_energy_levels = {0: ["in the trenches", "giving up", "bright_black"], 
-                        1: ["depressed", "exhausted", "red"],
-                        2: ["sad", "tired", "yellow"],
-                        3: ["pretty meh", "okay", "green"],
-                        4: ["good", "good", "cyan"],
-                        5: ["fantastic", "very high", "blue"]}
+state = 0
 
-moods = [Choice(title = [("class:black", "0 | in the trenches")], value = 0),
-         Choice(title = [("class:red", "1 | depressed")], value = 1),
-         Choice(title = [("class:yellow", "2 | sad")], value = 2),
-         Choice(title = [("class:green", "3 | pretty meh")], value = 3),
-         Choice(title = [("class:cyan", "4 | good")], value = 4),
-         Choice(title = [("class:blue", "5 | fantastic")], value = 5)]
-
-energies = [Choice(title = [("class:black", "0 | giving up")], value = 0),
-            Choice(title = [("class:red", "1 | exhausted")], value = 1),
-            Choice(title = [("class:yellow", "2 | tired")], value = 2),
-            Choice(title = [("class:green", "3 | okay")], value = 3),
-            Choice(title = [("class:cyan", "4 | good")], value = 4),
-            Choice(title = [("class:blue", "5 | very high")], value = 5)]
+mood_energy_levels = {0: ["in the trenches", "giving up", "bright_black"],
+                      1: ["depressed", "exhausted", "red"],
+                      2: ["sad", "tired", "yellow"],
+                      3: ["pretty meh", "okay", "green"],
+                      4: ["good", "good", "cyan"],
+                      5: ["fantastic", "very high", "blue"]}
+moods = [Choice(title=[("class:black", "0 | in the trenches")], value=0),
+         Choice(title=[("class:red", "1 | depressed")], value=1),
+         Choice(title=[("class:yellow", "2 | sad")], value=2),
+         Choice(title=[("class:green", "3 | pretty meh")], value=3),
+         Choice(title=[("class:cyan", "4 | good")], value=4),
+         Choice(title=[("class:blue", "5 | fantastic")], value=5)]
+energies = [Choice(title=[("class:black", "0 | giving up")], value=0),
+            Choice(title=[("class:red", "1 | exhausted")], value=1),
+            Choice(title=[("class:yellow", "2 | tired")], value=2),
+            Choice(title=[("class:green", "3 | okay")], value=3),
+            Choice(title=[("class:cyan", "4 | good")], value=4),
+            Choice(title=[("class:blue", "5 | very high")], value=5)]
+activities = ("Went out to eat", "Watched TV or a movie",
+              "Spent time on hobbies", "Played video games")
 
 colored_items = questionary.Style([
     ("black", "fg:#45475a"),
@@ -42,13 +45,16 @@ colored_items = questionary.Style([
     ("blue", "fg:#89b4fa")
 ])
 
+
 @click.command()
 def start() -> None:
     clear()
     mood_selector()
     energy_selector()
+    activities_selector()
     write_data_prompt()
     click.echo("Data stashed")
+
 
 def mood_selector() -> None:
     input = questionary.select(
@@ -61,8 +67,9 @@ def mood_selector() -> None:
         instruction=[''],
         style=colored_items
     ).ask()
-    global mood
-    mood = input
+    global mood_answer, state
+    mood_answer = input
+    state += 1
     clear()
     return
 
@@ -78,28 +85,58 @@ def energy_selector() -> None:
         instruction=[''],
         style=colored_items
     ).ask()
-    global energy
-    energy = input
+    global energy_answer, state
+    energy_answer = input
+    state += 1
     clear()
     return
 
+
+def activities_selector():
+    input = questionary.checkbox(
+        "What have you done or will you do today?",
+        choices=activities,
+        style=questionary.Style([("highlighted", "fg:#cba6f7"),
+                                 ("selected", "fg:#b4befe")])
+    ).ask()
+    global activities_answer, state
+    for e in input:
+        activities_answer[activities.index(e)] = True
+    state += 1
+    click.echo(activities_answer)
+    clear()
+    return
+
+
 def write_data_prompt() -> None:
-    input = questionary.confirm("Save this Checkin?", auto_enter=False, qmark="").ask()
+    input = questionary.confirm(
+        "Save this Checkin?", auto_enter=False, qmark="").ask()
     if input:
         write_data()
     return
 
 # Clear the terminal and print some info at the top, just for a nicer UX
+
+
 def clear() -> None:
     click.clear()
-    click.echo(click.style("Checkin for " + today.strftime("%B {S}, %Y").replace("{S}", str(today.day)), underline=True))
-    data = [date_int, mood, energy]
-    if (mood != -1):
+    click.echo(click.style("Checkin for " +
+               today.strftime("%B {S}, %Y").replace("{S}", str(today.day)), underline=True))
+    if (state >= 1):
         click.echo(click.style(" How are you feeling today?", bold=True))
-        click.echo("    " + click.style(mood_energy_levels[mood][0], fg=mood_energy_levels[mood][2]))
-    if (energy != -1):
+        click.echo(
+            "    " + click.style(mood_energy_levels[mood_answer][0], fg=mood_energy_levels[mood_answer][2]))
+    if (state >= 2):
         click.echo(click.style(" How's your energy today?", bold=True))
-        click.echo("    " + click.style(mood_energy_levels[energy][1], fg=mood_energy_levels[energy][2]))
+        click.echo(
+            "    " + click.style(mood_energy_levels[energy_answer][1], fg=mood_energy_levels[energy_answer][2]))
+    if (state >= 3):
+        click.echo(click.style(
+            " What have you done or will you do today?", bold=True))
+        for i, e in enumerate(activities_answer):
+            click.echo(
+                "    " + click.style(activities[i], fg="magenta")) if e else None
+
 
 """ Write the data to the CSV file
 :requires: The data directory to exist and that the CSV file is properly formmatted
@@ -107,10 +144,13 @@ def clear() -> None:
 Lots of things break this thing, zero promises are made about its functionality if the CSV is tampered with.
 We only ever kee one copy of a day's data, so if you check in multiple times in a day, only the last one will be saved
 """
+
+
 def write_data() -> None:
-    data = [date_int, mood, energy]
+    data = [date_int, mood_answer, energy_answer] + activities_answer
     written = False
-    target_path = os.path.join(os.path.dirname(__file__), (f"data/{today.year}.csv"))
+    target_path = os.path.join(os.path.dirname(
+        __file__), (f"data/{today.year}.csv"))
 
     # This creates the file if it doesnt exist
     with open(target_path, 'a', newline='') as file:
