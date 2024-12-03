@@ -34,12 +34,12 @@ energies = [Choice(title = [("class:black", "0 | giving up")], value = 0),
             Choice(title = [("class:blue", "5 | very high")], value = 5)]
 
 colored_items = questionary.Style([
-    ("black", "fg:black"),
-    ("red", "fg:red"),
-    ("yellow", "fg:yellow"),
-    ("green", "fg:green"),
-    ("cyan", "fg:cyan"),
-    ("blue", "fg:blue")
+    ("black", "fg:#45475a"),
+    ("red", "fg:#f38ba8"),
+    ("yellow", "fg:#f9e2af"),
+    ("green", "fg:#a6e3a1"),
+    ("cyan", "fg:#94e2d5"),
+    ("blue", "fg:#89b4fa")
 ])
 
 @click.command()
@@ -59,6 +59,7 @@ def mood_selector() -> None:
         default=3,
         qmark="",
         instruction=[''],
+        style=colored_items
     ).ask()
     global mood
     mood = input
@@ -75,6 +76,7 @@ def energy_selector() -> None:
         default=3,
         qmark="",
         instruction=[''],
+        style=colored_items
     ).ask()
     global energy
     energy = input
