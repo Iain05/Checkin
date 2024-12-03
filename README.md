@@ -6,10 +6,10 @@ Okay chat here's the idea *hear me out*. A CLI app that you can use to track you
 |-----------------|--------------|-------------|
 | Mood            | 0 - 5        |             |
 | Energy          | 1 - 10       |             |
+| Cry             | y/n          |             |
 | Productive Hours| 0.0 - 24.0   |             |
 | Hours of Sleep  | 0.0 - 24.0   |             |
-| Cry             | y/n          |             |
-
+| Time on hobbies | 0.0 - 24.0   |             |
 
 ## Hopeful Features
 - Spreadsheet exporting from the csv files
