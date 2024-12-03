@@ -3,9 +3,9 @@ import os
 import csv
 import questionary
 from datetime import datetime
-from questionary import Style
-from questionary import Choice
 
+from fields import mood_energy_levels, colored_items
+from fields import moods, energies, activities
 
 today = datetime.today()
 date_int = today.timetuple().tm_yday
@@ -14,36 +14,6 @@ energy_answer = -1
 activities_answer = [False, False, False, False]
 
 state = 0
-
-mood_energy_levels = {0: ["in the trenches", "giving up", "bright_black"],
-                      1: ["depressed", "exhausted", "red"],
-                      2: ["sad", "tired", "yellow"],
-                      3: ["pretty meh", "okay", "green"],
-                      4: ["good", "good", "cyan"],
-                      5: ["fantastic", "very high", "blue"]}
-moods = [Choice(title=[("class:black", "0 | in the trenches")], value=0),
-         Choice(title=[("class:red", "1 | depressed")], value=1),
-         Choice(title=[("class:yellow", "2 | sad")], value=2),
-         Choice(title=[("class:green", "3 | pretty meh")], value=3),
-         Choice(title=[("class:cyan", "4 | good")], value=4),
-         Choice(title=[("class:blue", "5 | fantastic")], value=5)]
-energies = [Choice(title=[("class:black", "0 | giving up")], value=0),
-            Choice(title=[("class:red", "1 | exhausted")], value=1),
-            Choice(title=[("class:yellow", "2 | tired")], value=2),
-            Choice(title=[("class:green", "3 | okay")], value=3),
-            Choice(title=[("class:cyan", "4 | good")], value=4),
-            Choice(title=[("class:blue", "5 | very high")], value=5)]
-activities = ("Went out to eat", "Watched TV or a movie",
-              "Spent time on hobbies", "Played video games")
-
-colored_items = questionary.Style([
-    ("black", "fg:#45475a"),
-    ("red", "fg:#f38ba8"),
-    ("yellow", "fg:#f9e2af"),
-    ("green", "fg:#a6e3a1"),
-    ("cyan", "fg:#94e2d5"),
-    ("blue", "fg:#89b4fa")
-])
 
 
 @click.command()
@@ -97,7 +67,8 @@ def activities_selector():
         "What have you done or will you do today?",
         choices=activities,
         style=questionary.Style([("highlighted", "fg:#cba6f7"),
-                                 ("selected", "fg:#b4befe")])
+                                 ("selected", "fg:#b4befe")]),
+        instruction=['(<space> to select)']
     ).ask()
     global activities_answer, state
     for e in input:
