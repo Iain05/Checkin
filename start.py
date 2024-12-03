@@ -1,7 +1,11 @@
 import click
 import os
 import csv
+import questionary
 from datetime import datetime
+from questionary import Style
+from questionary import Choice
+
 
 today = datetime.today()
 date_int = today.timetuple().tm_yday
@@ -15,54 +19,85 @@ mood_energy_levels = {0: ["in the trenches", "giving up", "bright_black"],
                         4: ["good", "good", "cyan"],
                         5: ["fantastic", "very high", "blue"]}
 
+moods = [Choice(title = [("class:black", "0 | in the trenches")], value = 0),
+         Choice(title = [("class:red", "1 | depressed")], value = 1),
+         Choice(title = [("class:yellow", "2 | sad")], value = 2),
+         Choice(title = [("class:green", "3 | pretty meh")], value = 3),
+         Choice(title = [("class:cyan", "4 | good")], value = 4),
+         Choice(title = [("class:blue", "5 | fantastic")], value = 5)]
+
+energies = [Choice(title = [("class:black", "0 | giving up")], value = 0),
+            Choice(title = [("class:red", "1 | exhausted")], value = 1),
+            Choice(title = [("class:yellow", "2 | tired")], value = 2),
+            Choice(title = [("class:green", "3 | okay")], value = 3),
+            Choice(title = [("class:cyan", "4 | good")], value = 4),
+            Choice(title = [("class:blue", "5 | very high")], value = 5)]
+
+colored_items = questionary.Style([
+    ("black", "fg:black"),
+    ("red", "fg:red"),
+    ("yellow", "fg:yellow"),
+    ("green", "fg:green"),
+    ("cyan", "fg:cyan"),
+    ("blue", "fg:blue")
+])
+
 @click.command()
 def start() -> None:
     clear()
-    mood_prompt()
-    energy_prompt()
-    write_data()
+    mood_selector()
+    energy_selector()
+    write_data_prompt()
     click.echo("Data stashed")
 
-def mood_prompt() -> None:
-    click.echo("How are you feeling today?")
-    for (i, level) in mood_energy_levels.items():
-        click.echo(click.style(str(i) + ") " + level[0] + "  ", fg=level[2]), nl=False)
-    click.echo()
-    input = click.prompt(">>>", type=int)
-    if input < 0 or input > 5:
-        click.clear()
-        click.echo("Please enter a value between 0 and 5.")
-        mood_prompt()
-    else:
-        global mood
-        mood = input
-        clear()
-        return
+def mood_selector() -> None:
+    input = questionary.select(
+        "How are you feeling today?",
+        choices=moods,
+        use_arrow_keys=True,
+        use_jk_keys=True,
+        default=3,
+        qmark="",
+        instruction=[''],
+    ).ask()
+    global mood
+    mood = input
+    clear()
+    return
 
-def energy_prompt() -> None:
-    click.echo("What's your energy level like?")
-    for (i, level) in mood_energy_levels.items():
-        click.echo(click.style(str(i) + ") " + level[1] + "  ", fg=level[2]), nl=False)
-    click.echo()
-    input = click.prompt(">>>", type=int)
-    if input < 0 or input > 5:
-        click.clear()
-        click.echo("Please enter a value between 0 and 5.")
-        energy_prompt()
-    else:
-        global energy
-        energy = input
-        clear()
-        return
+
+def energy_selector() -> None:
+    input = questionary.select(
+        "How's your energy today?",
+        choices=energies,
+        use_arrow_keys=True,
+        use_jk_keys=True,
+        default=3,
+        qmark="",
+        instruction=[''],
+    ).ask()
+    global energy
+    energy = input
+    clear()
+    return
+
+def write_data_prompt() -> None:
+    input = questionary.confirm("Save this Checkin?", auto_enter=False, qmark="").ask()
+    if input:
+        write_data()
+    return
+
 # Clear the terminal and print some info at the top, just for a nicer UX
 def clear() -> None:
     click.clear()
     click.echo(click.style("Checkin for " + today.strftime("%B {S}, %Y").replace("{S}", str(today.day)), underline=True))
     data = [date_int, mood, energy]
-    click.echo("---- Responses so far ----")
-    click.echo("Mood: " + click.style(mood_energy_levels[mood][0], fg=mood_energy_levels[mood][2])) if mood != -1 else None
-
-
+    if (mood != -1):
+        click.echo(click.style(" How are you feeling today?", bold=True))
+        click.echo("    " + click.style(mood_energy_levels[mood][0], fg=mood_energy_levels[mood][2]))
+    if (energy != -1):
+        click.echo(click.style(" How's your energy today?", bold=True))
+        click.echo("    " + click.style(mood_energy_levels[energy][1], fg=mood_energy_levels[energy][2]))
 
 """ Write the data to the CSV file
 :requires: The data directory to exist and that the CSV file is properly formmatted
