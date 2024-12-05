@@ -280,20 +280,6 @@ files = [
 ]
 
 [[package]]
-name = "uniplot"
-version = "0.15.1"
-description = "Lightweight plotting to the terminal. 4x resolution via Unicode."
-optional = false
-python-versions = ">=3.8"
-files = [
-    {file = "uniplot-0.15.1-py3-none-any.whl", hash = "sha256:d100ef83e5d2680c849eac995edf5fd458c487998e7ceffcbe2da8ef8f7e85d8"},
-    {file = "uniplot-0.15.1.tar.gz", hash = "sha256:32283760f1bd0e0db5cb5cf9026b47f0a063b4f3bd5b2e4c86f1004710a0ee8f"},
-]
-
-[package.dependencies]
-numpy = ">=1.22.0"
-
-[[package]]
 name = "wcwidth"
 version = "0.2.13"
 description = "Measures the displayed width of unicode strings in a terminal"
@@ -307,4 +293,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "d49ef316b6548ca9498a7b45b5c69e331af0651930759788a176d08a34c8284a"
+content-hash = "a644fa553d036f75a654a80a379a9219221a6522791a28c735bc1ad0f3fc3c2e"

@@ -3,7 +3,6 @@ import os
 import csv
 import questionary
 from datetime import datetime
-from catppuccin import PALETTE
 
 from fields import mood_energy_levels, colored_items, standard_style
 from fields import moods, energies, activities
@@ -24,14 +23,12 @@ def start() -> None:
     energy_selector()
     activities_selector()
     write_data_prompt()
-    click.echo("Data stashed")
 
 
 def mood_selector() -> None:
     input = questionary.select(
         "How are you feeling today?",
-        # choices=moods,
-        choices = ("0 | in the trenches", "1 | depressed", "2 | sad", "3 | pretty meh", "4 | good", "5 | fantastic"),
+        choices=moods,
         use_arrow_keys=True,
         use_jk_keys=True,
         default=3,
@@ -89,6 +86,10 @@ def write_data_prompt() -> None:
     ).ask()
     if input:
         write_data()
+        click.echo(
+            "Checkin for " + today.strftime("%B {S}, %Y").replace("{S}", str(today.day)) + " saved!")
+    else:
+        click.echo("Checkin discarded")
     return
 
 # Clear the terminal and print some info at the top, just for a nicer UX
