@@ -15,6 +15,6 @@ class Colors:
         self.blue = Color(rgbToTuple(palette.mocha.colors.blue.rgb), palette.mocha.colors.blue.hex)
 
 def rgbToTuple(rgb):
-    return [rgb.r, rgb.g, rgb.b]
+    return (rgb.r, rgb.g, rgb.b)
 
 COLORS = Colors(PALETTE)

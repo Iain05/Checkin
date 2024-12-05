@@ -3,6 +3,7 @@ import os
 import csv
 import questionary
 from datetime import datetime
+from catppuccin import PALETTE
 
 from fields import mood_energy_levels, colored_items, standard_style
 from fields import moods, energies, activities
@@ -29,7 +30,8 @@ def start() -> None:
 def mood_selector() -> None:
     input = questionary.select(
         "How are you feeling today?",
-        choices=moods,
+        # choices=moods,
+        choices = ("0 | in the trenches", "1 | depressed", "2 | sad", "3 | pretty meh", "4 | good", "5 | fantastic"),
         use_arrow_keys=True,
         use_jk_keys=True,
         default=3,
