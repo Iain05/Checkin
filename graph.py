@@ -15,6 +15,8 @@ def graph() -> None:
     plt.yticks([0, 1, 2, 3, 4, 5], ["in the trenches", "depressed",
                "sad", "pretty meh", "good", "fantastic"])
     # TODO switch to using a day month format and display by the month
+    plt.plot_size(min(plt.terminal_width(), 100),
+                  min(plt.terminal_height(), 20))
     plt.title("Mood of the day")
     plt.theme("pro")
     plt.show()
