@@ -31,9 +31,8 @@ def mood_selector() -> None:
         choices=moods,
         use_arrow_keys=True,
         use_jk_keys=True,
-        default=3,
         qmark="",
-        instruction=[''],
+        instruction="",
         style=colored_items
     ).ask()
     global mood_answer, state
@@ -49,9 +48,8 @@ def energy_selector() -> None:
         choices=energies,
         use_arrow_keys=True,
         use_jk_keys=True,
-        default=3,
         qmark="",
-        instruction=[''],
+        instruction="",
         style=colored_items
     ).ask()
     global energy_answer, state
@@ -67,7 +65,7 @@ def activities_selector():
         choices=activities,
         style=questionary.Style([("highlighted", "fg:#cba6f7"),
                                  ("selected", "fg:#b4befe")]),
-        instruction=['(<space> to select)']
+        instruction='(<space> to select)'
     ).ask()
     global activities_answer, state
     for e in input:
