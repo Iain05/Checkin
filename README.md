@@ -28,5 +28,7 @@ Okay chat here's the idea *hear me out*. A CLI app that you can use to track you
 - `checkin edit` - change a previous checkin
     - `-v` flag to view missed days
 - `checkin graph` - prompts the user to select a metric to graph right in the terminal
-
-
+- `checkin spotify`
+    - `-m/y/h` flag for month, one year, or half year data
+    - `-a` flag for artists (defaults to getting songs)
+    - `--top n` gets the top n items
