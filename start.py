@@ -8,6 +8,8 @@ from fields import mood_energy_levels, colored_items
 from fields import selector_style, standard_style
 from fields import moods, energies, activities
 
+from spotify import store_month_data
+
 today = datetime.today()
 date_int = today.timetuple().tm_yday
 mood_answer = -1
@@ -24,6 +26,12 @@ def start() -> None:
     energy_selector()
     activities_selector()
     write_data_prompt()
+    check_spotify()
+
+
+def check_spotify() -> None:
+    if datetime.today().day >= 20:
+        store_month_data()
 
 
 def mood_selector() -> None:
@@ -137,7 +145,7 @@ We only ever kee one copy of a day's data, so if you check in multiple times in 
 
 
 def write_data() -> None:
-    data = [date_int, mood_answer, energy_answer] + activities_answer
+    data = [today.strftime("%Y-%m-%d"), mood_answer, energy_answer] + activities_answer
     written = False
     target_path = os.path.join(os.path.dirname(__file__), (f"data/{today.year}.csv"))
 
@@ -155,11 +163,11 @@ def write_data() -> None:
         writer = csv.writer(file)
         for line in reader:
             # If the date is already in the file, we overwrite it
-            if line[0] == str(date_int):
+            if line[0] == today.strftime("%Y-%m-%d"):
                 writer.writerow(data)
                 written = True
             # If the date is greater than the current date, we insert the new data before it
-            elif int(line[0]) > date_int and not written:
+            elif datetime.strptime(line[0], "%Y-%m-%d") > today and not written:
                 writer.writerow(data)
                 writer.writerow(line)
                 written = True

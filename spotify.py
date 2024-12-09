@@ -2,7 +2,12 @@ import click
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from dotenv import load_dotenv
+from datetime import datetime
+
 import os
+import json
+
+today = datetime.today()
 
 load_dotenv()
 scope = "user-top-read"
@@ -18,7 +23,10 @@ sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope,
 @click.option("-h", is_flag=True, default=False, help="Show past 6 months top played")
 @click.option("-a", is_flag=True, default=False, help="Display artists instead of songs")
 @click.option("--top", default=5, show_default=True, help="Number of top items to display")
-def spotify(m, y, h, a, top) -> None:
+@click.option("--store", is_flag=True, default=False, help="Store top played data")
+def spotify(m, y, h, a, top, store) -> None:
+    if store:
+        store_month_data("december", "2024")
     if m:
         fetch_data("short_term", a, top)
     elif y:
@@ -27,6 +35,34 @@ def spotify(m, y, h, a, top) -> None:
         fetch_data("medium_term", a, top)
     else:
         fetch_data("short_term", a, top)
+
+def store_month_data() -> bool:
+    top_artists = sp.current_user_top_artists(time_range="short_term", limit=5)
+    top_tracks = sp.current_user_top_tracks(time_range="short_term", limit=5)
+    if not top_artists or not top_tracks:
+        print("Error getting spotify data")
+        return False
+    
+    artists = []
+    tracks = []
+    for artist in top_artists['items']:
+        artists.append(artist['name'])
+    for track in top_tracks['items']:
+        tracks.append({"name": track['name'], "artist": track['artists'][0]['name']})
+
+    with open(f"data/{today.year}_spotify.json", "r+") as f:
+        try:
+            data = json.load(f)
+        except json.JSONDecodeError:
+            data = {}
+            f.seek(0)
+            json.dump(data, f, indent=4)
+        data[today.month] = {"artists": artists, "tracks": tracks}
+        f.seek(0)
+        json.dump(data, f, indent=4)
+        f.truncate()
+        return True
+
 
 
 def fetch_data(time_range, artist, num_items) -> None:

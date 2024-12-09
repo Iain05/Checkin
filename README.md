@@ -32,3 +32,9 @@ Okay chat here's the idea *hear me out*. A CLI app that you can use to track you
     - `-m/y/h` flag for month, one year, or half year data
     - `-a` flag for artists (defaults to getting songs)
     - `--top n` gets the top n items
+
+## To-do list
+- [ ] edit previous entries
+- [ ] prompt user to add missing entries
+- [x] change date format of stored data and graph
+- [x] automatically start storing spotify data near end of month

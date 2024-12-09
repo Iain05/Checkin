@@ -4,17 +4,16 @@ import pandas as pd
 import plotext as plt
 from colorscheme import COLORS
 
+plt.date_form("Y-m-d")
 
 @click.command()
 def graph() -> None:
     data = loadCSV(2024, "mood")
     energy_data = loadCSV(2024, "energy")
-    data = data.rename(columns={"day": "mood of the day"})
-    plt.plot(data.mood, color=COLORS.red.rgb, marker="braille")
-    plt.plot(energy_data.energy, marker="braille")
+    plt.plot(data.date, data.mood, color=COLORS.red.rgb, marker="braille")
+    plt.plot(data.date, energy_data.energy, marker="braille")
     plt.yticks([0, 1, 2, 3, 4, 5], ["in the trenches", "depressed",
                "sad", "pretty meh", "good", "fantastic"])
-    # TODO switch to using a day month format and display by the month
     term_width = plt.terminal_width()
     term_height = plt.terminal_height()
     if term_width is not None and term_height is not None:
