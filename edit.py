@@ -57,9 +57,9 @@ def view_checkin(date: datetime) -> None:
         return
     click.echo(f"Checkin for {line[0]}")
     click.echo("Mood: ", nl=False)
-    click.echo(click.style(mood_energy_levels[int(line[1])][0], fg=mood_energy_levels[int(line[1])][2])))
+    click.echo(click.style(mood_energy_levels[int(line[1])][0], fg=mood_energy_levels[int(line[1])][2]))
     click.echo("Energy: ", nl=False)
-    click.echo(click.style(mood_energy_levels[int(line[2])][1], fg=mood_energy_levels[int(line[2])][2])))
+    click.echo(click.style(mood_energy_levels[int(line[2])][1], fg=mood_energy_levels[int(line[2])][2]))
     click.echo("Activities: ")
     for i, activity in enumerate(activities):
         if line[i + 3] == "True":
