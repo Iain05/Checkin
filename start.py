@@ -11,7 +11,6 @@ from fields import moods, energies, activities
 from spotify import store_month_data
 
 today = datetime.today()
-date_int = today.timetuple().tm_yday
 mood_answer = -1
 energy_answer = -1
 activities_answer = [False, False, False, False]
@@ -20,7 +19,18 @@ state = 0
 
 
 @click.command()
-def start() -> None:
+@click.argument("checkin_day", type=click.DateTime(["%Y-%m-%d"]), default=datetime.today())
+def start(checkin_day) -> None:
+    """
+    Args:
+        checkin_day: The day to check in for.
+
+    Main function to start the check-in process.
+    Clears the terminal, prompts the user for mood, energy, and activities,
+    then writes the data and checks Spotify data if applicable.
+    """
+    global today
+    today = checkin_day
     clear()
     mood_selector()
     energy_selector()
@@ -30,11 +40,19 @@ def start() -> None:
 
 
 def check_spotify() -> None:
+    """
+    Prompts the user to select their mood for the day using a questionary select prompt.
+    Updates the global mood_answer and state variables.
+    """
     if datetime.today().day >= 20:
         store_month_data()
 
 
 def mood_selector() -> None:
+    """
+    Prompts the user to select their mood for the day using a questionary select prompt.
+    Updates the global mood_answer and state variables.
+    """
     input = questionary.select(
         "How are you feeling today?",
         choices=moods,
@@ -52,6 +70,10 @@ def mood_selector() -> None:
 
 
 def energy_selector() -> None:
+    """
+    Prompts the user to select their energy level for the day using a questionary select prompt.
+    Updates the global energy_answer and state variables.
+    """
     input = questionary.select(
         "How's your energy today?",
         choices=energies,
@@ -69,6 +91,10 @@ def energy_selector() -> None:
 
 
 def activities_selector():
+    """
+    Prompts the user to select their activities for the day using a questionary checkbox prompt.
+    Updates the global activities_answer and state variables.
+    """
     input = questionary.checkbox(
         "What have you done or will you do today?",
         choices=activities,
@@ -85,6 +111,11 @@ def activities_selector():
 
 
 def write_data_prompt() -> None:
+    """
+    Prompts the user to confirm if they want to save the check-in data.
+    If confirmed, calls the write_data function and displays a success message.
+    Otherwise, displays a discard message.
+    """
     input = questionary.confirm(
         "Save this Checkin?", auto_enter=False, qmark="", style=standard_style
     ).ask()
@@ -104,6 +135,10 @@ def write_data_prompt() -> None:
 
 
 def clear() -> None:
+    """
+    Clears the terminal and prints the current check-in state.
+    Displays the date and the user's mood, energy, and activities based on the current state.
+    """
     click.clear()
     click.echo(
         click.style(
@@ -136,15 +171,15 @@ def clear() -> None:
             click.echo("    " + click.style(activities[i], fg="blue")) if e else None
 
 
-""" Write the data to the CSV file
-:requires: The data directory to exist and that the CSV file is properly formmatted
-:modifies: The CSV file for the current year
-Lots of things break this thing, zero promises are made about its functionality if the CSV is tampered with.
-We only ever kee one copy of a day's data, so if you check in multiple times in a day, only the last one will be saved
-"""
-
-
 def write_data() -> None:
+    """ Write the data to the CSV file
+
+    Requires: The data directory to exist and that the CSV file is properly formmatted
+    Modifies: The CSV file for the current year
+
+    Lots of things break this thing, zero promises are made about its functionality if the CSV is tampered with.
+    We only ever kee one copy of a day's data, so if you check in multiple times in a day, only the last one will be saved
+    """
     data = [today.strftime("%Y-%m-%d"), mood_answer, energy_answer] + activities_answer
     written = False
     target_path = os.path.join(os.path.dirname(__file__), (f"data/{today.year}.csv"))

@@ -23,18 +23,31 @@ Okay chat here's the idea *hear me out*. A CLI app that you can use to track you
     - Change the display of the mood values from default (purely visual/ux)
 
 ## Commands
-- `checkin start` - starts the checkin session and its prompts
-- `checkin export` - dumps the dsv into a 
-- `checkin edit` - change a previous checkin
-    - `-v` flag to view missed days
-- `checkin graph` - prompts the user to select a metric to graph right in the terminal
-- `checkin spotify`
-    - `-m/y/h` flag for month, one year, or half year data
-    - `-a` flag for artists (defaults to getting songs)
-    - `--top n` gets the top n items
+### `checkin start`
+Starts the checkin session and its prompts.
+
+### `checkin edit`
+Change a previous checkin.
+- `-v, --view` flag to view and edit missed checkins.
+- `%Y-%m-%d` argument to specify the date of the checkin to edit.
+
+### `checkin graph`
+Prompts the user to select a metric to graph right in the terminal.
+
+### `checkin spotify`
+Fetches and displays Spotify data.
+- `-m` flag to show past month's top played.
+- `-y` flag to show past year's top played.
+- `-h` flag to show past 6 months' top played.
+- `-a` flag to display artists instead of songs (defaults to getting songs).
+- `--top n` option to get the top `n` items.
+- `--store` flag to store top played data.
+
+
 
 ## To-do list
-- [ ] edit previous entries
 - [ ] prompt user to add missing entries
+- [ ] finish adding metrics to track
+- [x] edit previous entries
 - [x] change date format of stored data and graph
 - [x] automatically start storing spotify data near end of month
