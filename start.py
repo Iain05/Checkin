@@ -2,7 +2,8 @@ import click
 import os
 import csv
 import questionary
-from datetime import datetime
+import pandas as pd
+from datetime import datetime, timedelta
 
 from fields import mood_energy_levels, colored_items
 from fields import selector_style, standard_style
@@ -31,6 +32,10 @@ def start(checkin_day) -> None:
     """
     global today
     today = checkin_day
+    if today.date() == datetime.today().date():
+        missed_checkins = missed_dates()
+        if missed_checkins != []:
+            prompt_missing_dates(missed_checkins=missed_checkins)
     clear()
     mood_selector()
     energy_selector()
@@ -38,6 +43,16 @@ def start(checkin_day) -> None:
     write_data_prompt()
     check_spotify()
 
+@click.pass_context
+def prompt_missing_dates(context, missed_checkins) -> None:
+    clear()
+    input = questionary.confirm(
+        "You have some missed checkins, would you like to view/edit them?", 
+        auto_enter=False, qmark="", style=standard_style
+    ).ask()
+    if input:
+        context.invoke(start, checkin_day=missed_checkins[0])
+    return
 
 def check_spotify() -> None:
     """
@@ -212,3 +227,23 @@ def write_data() -> None:
         # If we never wrote the data, we write it at the end of the file
         if not written:
             writer.writerow(data)
+
+def missed_dates() -> list[datetime]:
+    """
+    Determines the dates that are missing from the CSV file for the current year.
+    is not dependent on the global variable today, it always checks the current year.
+    It determines missing dates by checking from the start of the csv file to the 
+    current date.
+    Returns: 
+        A list of datetime objects representing the missing dates.
+    """
+    with open(f"data/{datetime.today().year}.csv") as file:
+        reader = csv.reader(file.readlines())
+        start_date = next(reader)[0]
+        dates = pd.date_range(start=start_date, end=datetime.today() - timedelta(1)).to_pydatetime().tolist()
+        dates.remove(datetime.strptime(start_date, "%Y-%m-%d"))
+        file.seek(0)
+        print(start_date)
+        for line in reader:
+            dates.remove(datetime.strptime(line[0], "%Y-%m-%d"))
+        return dates

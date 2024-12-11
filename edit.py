@@ -22,8 +22,12 @@ def edit(context, date, view, missed) -> None:
     """
     if date is not None and view:
         view_checkin(date)
-    else:
+    elif date is None and view:
+        click.echo("Feature not implemented yet L")
+    elif date is not None:
         context.invoke(start, checkin_day=date)
+    else:
+        context.invoke(start)
 
 def find_line(date: datetime) -> list | None:
     """

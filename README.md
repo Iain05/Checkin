@@ -46,9 +46,10 @@ Fetches and displays Spotify data.
 
 
 ## To-do list
-- [ ] prompt user to add missing entries
 - [ ] finish adding metrics to track
 - [ ] list old entries and missed entries
+    - For this I need to figure out a way to have a scrollable selector lol
+- [x] prompt user to add missing entries
 - [x] edit previous entries
 - [x] change date format of stored data and graph
 - [x] automatically start storing spotify data near end of month
