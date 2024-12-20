@@ -26,5 +26,5 @@ def graph() -> None:
 
 def loadCSV(year, metric):
     target_path = os.path.join(os.path.dirname(__file__), (f"data/{year}.csv"))
-    headers = ["date", "mood", "energy", "ate", "tv", "hobbies", "games"]
+    headers = ["date", "mood", "energy", "ate", "tv", "hobbies", "games", "cried"]
     return pd.read_csv(filepath_or_buffer=target_path, sep=',', names=headers, usecols=["date", metric])

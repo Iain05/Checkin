@@ -1,5 +1,5 @@
 import questionary
-from questionary import Choice
+from questionary import Choice, Validator, ValidationError
 from colorscheme import COLORS
 
 mood_energy_levels = {
@@ -34,6 +34,7 @@ activities = (
     "Watched TV or a movie",
     "Spent time on hobbies",
     "Played video games",
+    "Cried"
 )
 
 colored_items = questionary.Style(
@@ -52,3 +53,12 @@ standard_style = questionary.Style([("answer", "fg:" + COLORS.blue.hex)])
 selector_style = questionary.Style(
     [("highlighted", "fg:#cba6f7"), ("selected", "fg:#b4befe")]
 )
+
+class HoursValidator(Validator):
+    def validate(self, document):
+        try:
+            hours = float(document.text)
+        except ValueError:
+            raise ValidationError(message="Please enter a valid number")
+        if hours < 0 or hours > 24:
+            raise ValidationError(message="Please enter a number between 0 and 24")

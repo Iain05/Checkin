@@ -5,16 +5,17 @@ import questionary
 import pandas as pd
 from datetime import datetime, timedelta
 
-from fields import mood_energy_levels, colored_items
-from fields import selector_style, standard_style
-from fields import moods, energies, activities
+from fields import *
 
 from spotify import store_month_data
 
 today = datetime.today()
 mood_answer = -1
 energy_answer = -1
-activities_answer = [False, False, False, False]
+activities_answer = [False] * len(activities)
+productive_answer = 0
+sleep_answer = 0
+
 
 state = 0
 
@@ -36,10 +37,13 @@ def start(checkin_day) -> None:
         missed_checkins = missed_dates()
         if missed_checkins != []:
             prompt_missing_dates(missed_checkins=missed_checkins)
+            return
     clear()
     mood_selector()
     energy_selector()
     activities_selector()
+    hours_prompt("How many hours were you productive today?", "productive")
+    hours_prompt("How many hours did you sleep today?", "sleep")
     write_data_prompt()
     check_spotify()
 
@@ -124,6 +128,23 @@ def activities_selector():
     clear()
     return
 
+def hours_prompt(prompt: str, type: str) -> None:
+    """
+    Prompt the user to input the hours they were productive for the day.
+    """
+    input = questionary.text(
+        prompt,
+        validate=HoursValidator(),
+    ).ask()
+    global state
+    state += 1
+    if type == "productive":
+        global productive_answer
+        productive_answer = input
+    else:
+        global sleep_answer
+        sleep_answer = input
+    clear()
 
 def write_data_prompt() -> None:
     """
@@ -144,9 +165,6 @@ def write_data_prompt() -> None:
     else:
         click.echo("Checkin discarded")
     return
-
-
-# Clear the terminal and print some info at the top, just for a nicer UX
 
 
 def clear() -> None:
@@ -184,6 +202,12 @@ def clear() -> None:
         click.echo(click.style(" What have you done or will you do today?", bold=True))
         for i, e in enumerate(activities_answer):
             click.echo("    " + click.style(activities[i], fg="blue")) if e else None
+    if state >= 4:
+        click.echo(click.style(" How many hours were you productive today?", bold=True))
+        click.echo(f"    {productive_answer}")
+    if state >= 5:
+        click.echo(click.style(" How many hours did you sleep today?", bold=True))
+        click.echo(f"    {sleep_answer}")
 
 
 def write_data() -> None:
@@ -196,6 +220,8 @@ def write_data() -> None:
     We only ever kee one copy of a day's data, so if you check in multiple times in a day, only the last one will be saved
     """
     data = [today.strftime("%Y-%m-%d"), mood_answer, energy_answer] + activities_answer
+    data.append(productive_answer)
+    data.append(sleep_answer)
     written = False
     target_path = os.path.join(os.path.dirname(__file__), (f"data/{today.year}.csv"))
 
@@ -245,5 +271,8 @@ def missed_dates() -> list[datetime]:
         file.seek(0)
         print(start_date)
         for line in reader:
-            dates.remove(datetime.strptime(line[0], "%Y-%m-%d"))
+            try:
+                dates.remove(datetime.strptime(line[0], "%Y-%m-%d"))
+            except:
+                pass
         return dates

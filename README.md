@@ -51,5 +51,6 @@ Fetches and displays Spotify data.
     - For this I need to figure out a way to have a scrollable selector lol
 - [x] prompt user to add missing entries
 - [x] edit previous entries
+    - [ ] Okay preferably I could have a cool like date selector thing but i havent found one yet
 - [x] change date format of stored data and graph
 - [x] automatically start storing spotify data near end of month
