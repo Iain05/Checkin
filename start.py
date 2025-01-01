@@ -21,7 +21,9 @@ state = 0
 
 
 @click.command()
-@click.argument("checkin_day", type=click.DateTime(["%Y-%m-%d"]), default=datetime.today())
+@click.argument(
+    "checkin_day", type=click.DateTime(["%Y-%m-%d"]), default=datetime.today()
+)
 def start(checkin_day) -> None:
     """
     Args:
@@ -47,16 +49,20 @@ def start(checkin_day) -> None:
     write_data_prompt()
     check_spotify()
 
+
 @click.pass_context
 def prompt_missing_dates(context, missed_checkins) -> None:
     clear()
     input = questionary.confirm(
-        "You have some missed checkins, would you like to view/edit them?", 
-        auto_enter=False, qmark="", style=standard_style
+        "You have some missed checkins, would you like to view/edit them?",
+        auto_enter=False,
+        qmark="",
+        style=standard_style,
     ).ask()
     if input:
         context.invoke(start, checkin_day=missed_checkins[0])
     return
+
 
 def check_spotify() -> None:
     """
@@ -128,6 +134,7 @@ def activities_selector():
     clear()
     return
 
+
 def hours_prompt(prompt: str, type: str) -> None:
     """
     Prompt the user to input the hours they were productive for the day.
@@ -145,6 +152,7 @@ def hours_prompt(prompt: str, type: str) -> None:
         global sleep_answer
         sleep_answer = input
     clear()
+
 
 def write_data_prompt() -> None:
     """
@@ -211,7 +219,7 @@ def clear() -> None:
 
 
 def write_data() -> None:
-    """ Write the data to the CSV file
+    """Write the data to the CSV file
 
     Requires: The data directory to exist and that the CSV file is properly formmatted
     Modifies: The CSV file for the current year
@@ -254,19 +262,26 @@ def write_data() -> None:
         if not written:
             writer.writerow(data)
 
+
 def missed_dates() -> list[datetime]:
     """
     Determines the dates that are missing from the CSV file for the current year.
     is not dependent on the global variable today, it always checks the current year.
-    It determines missing dates by checking from the start of the csv file to the 
+    It determines missing dates by checking from the start of the csv file to the
     current date.
-    Returns: 
+    Returns:
         A list of datetime objects representing the missing dates.
     """
-    with open(f"data/{datetime.today().year}.csv") as file:
+    if os.stat(f"data/{datetime.today().year}.csv").st_size == 0:
+        return []
+    with open(f"data/{datetime.today().year}.csv", "w+") as file:
         reader = csv.reader(file.readlines())
         start_date = next(reader)[0]
-        dates = pd.date_range(start=start_date, end=datetime.today() - timedelta(1)).to_pydatetime().tolist()
+        dates = (
+            pd.date_range(start=start_date, end=datetime.today() - timedelta(1))
+            .to_pydatetime()
+            .tolist()
+        )
         dates.remove(datetime.strptime(start_date, "%Y-%m-%d"))
         file.seek(0)
         print(start_date)
