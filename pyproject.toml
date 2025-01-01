@@ -23,7 +23,7 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-checkin = "checkin:main" #entry point
+checkin = "checkin.checkin:main" #entry point
 
 [tool.pyright]
 venvPath = "."

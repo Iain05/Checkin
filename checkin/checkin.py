@@ -1,8 +1,8 @@
 import click
-import start
-import graph
-import spotify
-import edit
+from checkin import start
+from checkin import graph
+from checkin import spotify
+from checkin import edit
 
 
 @click.group()

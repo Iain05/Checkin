@@ -5,9 +5,10 @@ import questionary
 import pandas as pd
 from datetime import datetime, timedelta
 
-from fields import *
+from checkin.fields import *
+from checkin.config import *
 
-from spotify import store_month_data
+from checkin.spotify import store_month_data
 
 today = datetime.today()
 mood_answer = -1
@@ -231,9 +232,10 @@ def write_data() -> None:
     data.append(productive_answer)
     data.append(sleep_answer)
     written = False
-    target_path = os.path.join(os.path.dirname(__file__), (f"data/{today.year}.csv"))
+    target_path = os.path.join(DEFAULT_DIR, (f"data/{today.year}.csv"))
 
     # This creates the file if it doesnt exist
+    os.makedirs(os.path.dirname(target_path), exist_ok=True)
     with open(target_path, "a", newline="") as file:
         file.close()
 
@@ -272,9 +274,10 @@ def missed_dates() -> list[datetime]:
     Returns:
         A list of datetime objects representing the missing dates.
     """
-    if os.stat(f"data/{datetime.today().year}.csv").st_size == 0:
+    target_path = os.path.join(DEFAULT_DIR, (f"data/{today.year}.csv"))
+    if os.stat(target_path).st_size <= 1:
         return []
-    with open(f"data/{datetime.today().year}.csv", "w+") as file:
+    with open(target_path, "w+") as file:
         reader = csv.reader(file.readlines())
         start_date = next(reader)[0]
         dates = (

@@ -1,9 +1,10 @@
 import click
 import csv
 from datetime import datetime
-from start import start
+from checkin.start import start
 
-from fields import moods, energies, activities, mood_energy_levels
+from checkin.fields import moods, energies, activities, mood_energy_levels
+
 
 @click.command()
 @click.argument("date", type=click.DateTime(["%Y-%m-%d"]), required=False)
@@ -13,7 +14,7 @@ from fields import moods, energies, activities, mood_energy_levels
 def edit(context, date, view, missed) -> None:
     """
     Command to edit or view a checkin.
-    
+
     Args:
         context: Click context to invoke other commands.
         date: The date of the checkin to edit or view (format: %Y-%m-%d).
@@ -29,17 +30,19 @@ def edit(context, date, view, missed) -> None:
     else:
         context.invoke(start)
 
+
 def find_line(date: datetime) -> list | None:
     """
     Finds the checkin data for a given date in the CSV file.
-    
+
     Args:
         date: The date to find the checkin for.
-    
+
     Returns:
         The checkin data as a list, or None if not found.
     """
-    with open(f"data/{date.year}.csv") as file:
+    target_path = os.path.join(DEFAULT_DIR, (f"data/{today.year}.csv"))
+    with open(target_path) as file:
         reader = csv.reader(file.readlines())
         file.seek(0)
         for line in reader:
@@ -48,10 +51,11 @@ def find_line(date: datetime) -> list | None:
         file.close()
     return None
 
+
 def view_checkin(date: datetime) -> None:
     """
     Displays the checkin data for a given date.
-    
+
     Args:
         date: The date of the checkin to view.
     """
@@ -61,9 +65,17 @@ def view_checkin(date: datetime) -> None:
         return
     click.echo(f"Checkin for {line[0]}")
     click.echo("Mood: ", nl=False)
-    click.echo(click.style(mood_energy_levels[int(line[1])][0], fg=mood_energy_levels[int(line[1])][2]))
+    click.echo(
+        click.style(
+            mood_energy_levels[int(line[1])][0], fg=mood_energy_levels[int(line[1])][2]
+        )
+    )
     click.echo("Energy: ", nl=False)
-    click.echo(click.style(mood_energy_levels[int(line[2])][1], fg=mood_energy_levels[int(line[2])][2]))
+    click.echo(
+        click.style(
+            mood_energy_levels[int(line[2])][1], fg=mood_energy_levels[int(line[2])][2]
+        )
+    )
     click.echo("Activities: ")
     for i, activity in enumerate(activities):
         if line[i + 3] == "True":

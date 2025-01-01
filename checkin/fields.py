@@ -1,6 +1,6 @@
 import questionary
 from questionary import Choice, Validator, ValidationError
-from colorscheme import COLORS
+from checkin.colorscheme import COLORS
 
 mood_energy_levels = {
     0: ["in the trenches", "giving up", COLORS.surface1.rgb],
@@ -34,7 +34,7 @@ activities = (
     "Watched TV or a movie",
     "Spent time on hobbies",
     "Played video games",
-    "Cried"
+    "Cried",
 )
 
 colored_items = questionary.Style(
@@ -53,6 +53,7 @@ standard_style = questionary.Style([("answer", "fg:" + COLORS.blue.hex)])
 selector_style = questionary.Style(
     [("highlighted", "fg:#cba6f7"), ("selected", "fg:#b4befe")]
 )
+
 
 class HoursValidator(Validator):
     def validate(self, document):
