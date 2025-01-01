@@ -1,9 +1,11 @@
 import click
 import csv
+import os
 from datetime import datetime
 from checkin.start import start
 
 from checkin.fields import moods, energies, activities, mood_energy_levels
+from checkin.config import DEFAULT_DIR
 
 
 @click.command()
@@ -41,7 +43,7 @@ def find_line(date: datetime) -> list | None:
     Returns:
         The checkin data as a list, or None if not found.
     """
-    target_path = os.path.join(DEFAULT_DIR, (f"data/{today.year}.csv"))
+    target_path = os.path.join(DEFAULT_DIR, (f"data/{datetime.today().year}.csv"))
     with open(target_path) as file:
         reader = csv.reader(file.readlines())
         file.seek(0)
