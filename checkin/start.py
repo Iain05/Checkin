@@ -275,17 +275,25 @@ def missed_dates() -> list[datetime]:
         A list of datetime objects representing the missing dates.
     """
     target_path = os.path.join(DEFAULT_DIR, (f"data/{today.year}.csv"))
-    if os.stat(target_path).st_size <= 1:
-        return []
-    with open(target_path, "w+") as file:
+    os.makedirs(os.path.dirname(target_path), exist_ok=True)
+    with open(target_path, "a", newline="") as file:
+        file.close()
+
+    with open(target_path) as file:
         reader = csv.reader(file.readlines())
-        start_date = next(reader)[0]
+        try:
+            start_date = next(reader)[0]
+        except:
+            return []
         dates = (
             pd.date_range(start=start_date, end=datetime.today() - timedelta(1))
             .to_pydatetime()
             .tolist()
         )
-        dates.remove(datetime.strptime(start_date, "%Y-%m-%d"))
+        try:
+            dates.remove(datetime.strptime(start_date, "%Y-%m-%d"))
+        except Exception as e:
+            pass
         file.seek(0)
         print(start_date)
         for line in reader:

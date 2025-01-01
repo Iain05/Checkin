@@ -43,6 +43,19 @@ Fetches and displays Spotify data.
 - `--top n` option to get the top `n` items.
 - `--store` flag to store top played data.
 
+# Installation and Configuration
+To install this into your system, you can simply run the command 
+```sh
+pipx install git+https://github.com/Iain05/checkin.git
+```
+Next you need to set the environment variables for spotify integration (I'll make this optional eventually), which can be done on Linux by adding the following lines to your .bashrc likely in your home directory.
+```sh
+export SPOTIPY_CLIENT_ID="spotify_api_client_id_here"
+export SPOTIPY_CLIENT_SECRET="spotify_api_client_secret_here"
+```
+Upon first running `checkin start`, it should automatically create a folder `.checkin` inside your home directory that contains all the user data.
+
+
 
 
 ## To-do list
