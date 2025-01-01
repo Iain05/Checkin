@@ -5,6 +5,9 @@ description = "a daily checkin app and tracker"
 authors = ["Iain05 <igriesdale@gmail.com>"]
 license = "MIT"
 readme = "README.md"
+packages = [
+  { include = "start" },
+]
 
 [tool.poetry.dependencies]
 python = "^3.12"
