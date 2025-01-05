@@ -30,7 +30,7 @@ energies = [
 ]
 
 activities = (
-    "Went out to eat",
+    "Hung out with friends outside class",
     "Watched TV or a movie",
     "Spent time on hobbies",
     "Played video games",
