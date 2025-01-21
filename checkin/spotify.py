@@ -78,7 +78,10 @@ def store_month_data() -> bool:
     for track in top_tracks["items"]:
         tracks.append({"name": track["name"], "artist": track["artists"][0]["name"]})
 
-    target_path = os.path.join(DEFAULT_DIR, (f"data/{today.year}_spotify.json"))
+    target_path = os.path.join(DEFAULT_DIR, 'data', (f"{today.year}_spotify.json"))
+    if not os.path.isfile(target_path):
+        f = open(target_path, 'w')
+        f.close()
     with open(target_path, "r+") as f:
         try:
             data = json.load(f)
